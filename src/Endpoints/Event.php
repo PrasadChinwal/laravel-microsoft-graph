@@ -30,14 +30,15 @@ class Event extends MicrosoftGraph
      */
     public function get(): Collection
     {
-        return Http::withToken($this->getAccessToken())
+        $data = Http::withToken($this->getAccessToken())
             ->withUrlParameters([
                 'user_id' => $this->email,
             ])
             ->get('https://graph.microsoft.com/v1.0/users/{user_id}/events')
             ->throwUnlessStatus(200)
             ->collect()
-            ->mapInto(EventCollection::class);
+            ->get('value');
+        return EventCollection::createFromArray($data);
     }
 
     /**
@@ -133,9 +134,12 @@ class Event extends MicrosoftGraph
     }
 
     /**
+     * @param  string  $eventId
+     * @param  Mailable  $mailable
+     * @return Collection
      * @throws RequestException
      */
-    public function update(Mailable $mailable, string $eventId): Collection
+    public function update(string $eventId, Mailable $mailable,): Collection
     {
         return Http::withToken($this->getAccessToken())
             ->withUrlParameters([

@@ -4,92 +4,92 @@ namespace PrasadChinwal\MicrosoftGraph\Response;
 
 class Event
 {
-    protected string $id;
+    public string $id;
 
-    protected string $subject;
+    public string $subject;
 
-    protected $bodyPreview;
+    public $bodyPreview;
 
-    protected $createdDateTime;
+    public $createdDateTime;
 
-    protected $lastModifiedDateTime;
+    public $lastModifiedDateTime;
 
-    protected string $changeKey;
+    public string $changeKey;
 
-    protected array $categories;
+    public array $categories;
 
-    protected string $transactionId;
+    public ?string $transactionId;
 
-    protected $originalStartTimeZone;
+    public $originalStartTimeZone;
 
-    protected $originalEndTimeZone;
+    public $originalEndTimeZone;
 
-    protected string $iCalUId;
+    public string $iCalUId;
 
-    protected $reminderMinutesBeforeStart;
+    public $reminderMinutesBeforeStart;
 
-    protected bool $isReminderOn;
+    public bool $isReminderOn;
 
-    protected bool $hasAttachments;
+    public bool $hasAttachments;
 
-    protected string $importance;
+    public string $importance;
 
-    protected string $sensitivity;
+    public string $sensitivity;
 
-    protected bool $isAllDay;
+    public bool $isAllDay;
 
-    protected bool $isCancelled;
+    public bool $isCancelled;
 
-    protected bool $isOrganizer;
+    public bool $isOrganizer;
 
-    protected bool $responseRequested;
+    public bool $responseRequested;
 
-    protected $seriesMasterId;
+    public $seriesMasterId;
 
-    protected string $showAs;
+    public string $showAs;
 
-    protected string $type;
+    public string $type;
 
-    protected string $webLink;
+    public string $webLink;
 
-    protected string $onlineMeetingUrl;
+    public ?string $onlineMeetingUrl;
 
-    protected bool $isOnlineMeeting;
+    public bool $isOnlineMeeting;
 
-    protected string $onlineMeetingProvider;
+    public string $onlineMeetingProvider;
 
-    protected bool $allowNewTimeProposals;
+    public bool $allowNewTimeProposals;
 
-    protected $occurrenceId;
+    public $occurrenceId;
 
-    protected bool $isDraft;
+    public bool $isDraft;
 
-    protected bool $hideAttendees;
+    public bool $hideAttendees;
 
-    protected array $responseStatus;
+    public array $responseStatus;
 
-    protected array $body;
+    public array $body;
 
-    protected array $start;
+    public array $start;
 
-    protected array $end;
+    public array $end;
 
-    protected array $location;
+    public array $location;
 
-    protected array $locations;
+    public array $locations;
 
-    protected string $recurrence;
+    public ?string $recurrence;
 
-    protected array $attendees;
+    public array $attendees;
 
-    protected array $organizer;
+    public array $organizer;
 
-    protected string $onlineMeeting;
+    public ?array $onlineMeeting;
 
     public function __construct(array $items = [])
     {
         foreach ($items as $key => $value) {
-            $this->{$key} = $value;
+            (object)$this->{$key} = $value;
         }
     }
 }
