@@ -1,0 +1,46 @@
+{
+    "name": "prasadchinwal/microsoft-graph",
+    "description": "Package for working with Microsoft Graph API",
+    "type": "library",
+    "license": "MIT",
+    "authors": [
+        {
+            "name": "ChinwalPrasad",
+            "email": "prasadchinwal5@gmail.com"
+        }
+    ],
+    "require": {
+        "php": "^8.1",
+        "illuminate/support": "^10.0"
+    },
+    "require-dev": {
+        "laravel/pint": "^1.10",
+        "pestphp/pest": "^2.13"
+    },
+    "autoload": {
+        "psr-4": {
+            "PrasadChinwal\\MicrosoftGraph\\": "src/"
+        }
+    },
+    "autoload-dev": {
+        "psr-4": {
+            "PrasadChinwal\\MicrosoftGraph\\Test\\": "tests/"
+        }
+    },
+    "minimum-stability": "stable",
+    "config": {
+        "allow-plugins": {
+            "pestphp/pest-plugin": true
+        }
+    },
+    "extra": {
+        "laravel": {
+            "providers": [
+                "PrasadChinwal\\MicrosoftGraph\\MicrosoftGraphServiceProvider"
+            ],
+            "aliases": {
+                "MicrosoftGraph": "PrasadChinwal\\MicrosoftGraph\\Facades\\MicrosoftGraph"
+            }
+        }
+    }
+}
