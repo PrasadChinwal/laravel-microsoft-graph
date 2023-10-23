@@ -78,7 +78,7 @@ class Event
 
     public array $locations;
 
-    public ?string $recurrence;
+    public ?array $recurrence;
 
     public array $attendees;
 
