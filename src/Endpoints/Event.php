@@ -45,7 +45,6 @@ class Event extends MicrosoftGraph
             ->append(' ')
             ->append(Str::wrap($value, "'"))
             ->value();
-        dump($this->filter);
         return $this;
     }
 
@@ -67,7 +66,6 @@ class Event extends MicrosoftGraph
             ->append(' ')
             ->append(Str::wrap($value, "'"))
             ->value();
-        dump($this->filter);
         return $this;
     }
 
