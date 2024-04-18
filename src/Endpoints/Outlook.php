@@ -21,7 +21,8 @@ class Outlook extends MicrosoftGraph
      */
     public function sendEmail(string $subject, string $message, array|string $to): \Illuminate\Support\Collection
     {
-        return Http::withToken($this->getAccessToken())
+        return Http::graph()
+            ->withToken($this->getAccessToken())
             ->asJson()
             ->post('https://graph.microsoft.com/v1.0/user/1314e006-65ce-476a-86c1-ea8e1ddbd2db/sendMail', [
                 'message' => [

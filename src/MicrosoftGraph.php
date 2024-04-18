@@ -50,6 +50,7 @@ class MicrosoftGraph
      * Create a new provider instance.
      *
      * @return void
+     * @throws RequestException
      */
     public function __construct()
     {

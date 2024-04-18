@@ -8,7 +8,6 @@ use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Str;
 use PrasadChinwal\MicrosoftGraph\Contracts\HasProfilePhoto;
 use PrasadChinwal\MicrosoftGraph\MicrosoftGraph;
-use PrasadChinwal\MicrosoftGraph\Response\GraphUser;
 use PrasadChinwal\MicrosoftGraph\Traits\HasProfilePhoto as ProfilePhoto;
 
 class User extends MicrosoftGraph implements HasProfilePhoto

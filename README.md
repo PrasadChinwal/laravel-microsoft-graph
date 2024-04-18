@@ -69,6 +69,16 @@ A wrapper to integrate Microsoft Graph Api's to a Laravel Application.
         ->get();
     dd($graph->first()->subject); // To retrieve subject of first event.
     ```
+   > You can also filter the events:
+   >
+   > For List of all filters please refer to docs [https://learn.microsoft.com/en-us/graph/filter-query-parameter?tabs=http](https://learn.microsoft.com/en-us/graph/filter-query-parameter?tabs=http).
+    ```php
+    $graph = MicrosoftGraph::event()
+            ->for('abc@xyz.com')
+            ->where("start/dateTime", "ge", "2024-04-17")
+            ->where("end/dateTime", "le", "2024-04-26")
+            ->get();
+    ```
 
 2. Create new Event for a user : [Documentation](https://learn.microsoft.com/en-us/graph/api/user-post-events?view=graph-rest-1.0&tabs=http)
    > Creates an event in calendar for the user.  

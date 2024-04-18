@@ -27,7 +27,8 @@ class Mail extends MicrosoftGraph
      */
     public function get()
     {
-        return Http::withToken($this->getAccessToken())
+        return Http::graph()
+            ->withToken($this->getAccessToken())
             ->withUrlParameters([
                 'user_id' => $this->email,
             ])

@@ -52,7 +52,8 @@ class Calendar extends MicrosoftGraph
      */
     public function schedule(array $users, Carbon $from, Carbon $to, string $timezone = 'UTC', int $interval = 30): Collection
     {
-        return Http::withToken($this->getAccessToken())
+        return Http::graph()
+            ->withToken($this->getAccessToken())
             ->withUrlParameters([
                 'user_id' => $this->email,
             ])
