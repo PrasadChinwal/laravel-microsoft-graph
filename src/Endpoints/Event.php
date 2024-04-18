@@ -6,12 +6,16 @@ use Illuminate\Contracts\Mail\Mailable;
 use Illuminate\Http\Client\RequestException;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Http;
+use Illuminate\Support\Str;
+use Illuminate\Support\Stringable;
 use PrasadChinwal\MicrosoftGraph\Collections\EventCollection;
 use PrasadChinwal\MicrosoftGraph\MicrosoftGraph;
 
 class Event extends MicrosoftGraph
 {
     protected string $email;
+
+    protected ?string $filter = null;
 
     /**
      * @return $this
@@ -24,22 +28,71 @@ class Event extends MicrosoftGraph
     }
 
     /**
+     * @param $field
+     * @param $condition
+     * @param $value
+     * @return $this
+     */
+    public function where($field, $condition, $value): static
+    {
+        $this->filter = Str::of($this->filter)
+            ->whenNotEmpty(function (Stringable $string) {
+                return $string->append(' and ');
+            })
+            ->append($field)
+            ->append(' ')
+            ->append($condition)
+            ->append(' ')
+            ->append(Str::wrap($value, "'"))
+            ->value();
+        dump($this->filter);
+        return $this;
+    }
+
+    /**
+     * @param $field
+     * @param $condition
+     * @param $value
+     * @return $this
+     */
+    public function orWhere($field, $condition, $value): static
+    {
+        $this->filter = Str::of($this->filter)
+            ->whenNotEmpty(function (Stringable $string) {
+                return $string->append(' or ');
+            })
+            ->append($field)
+            ->append(' ')
+            ->append($condition)
+            ->append(' ')
+            ->append(Str::wrap($value, "'"))
+            ->value();
+        dump($this->filter);
+        return $this;
+    }
+
+    /**
      * @return \Illuminate\Support\Collection
      *
      * @throws RequestException
      */
     public function get(): Collection
     {
-        $data = Http::withToken($this->getAccessToken())
+        $data = Http::graph()
+            ->withToken($this->getAccessToken())
             ->withUrlParameters([
                 'user_id' => $this->email,
             ])
-            ->get('https://graph.microsoft.com/v1.0/users/{user_id}/events')
+            ->get('https://graph.microsoft.com/v1.0/users/{user_id}/events',[
+                '$filter' => $this->filter
+            ])
             ->throwUnlessStatus(200)
             ->collect()
             ->get('value');
         return EventCollection::createFromArray($data);
     }
+
+    // 300 S 9 th street
 
     /**
      * @throws RequestException
@@ -48,7 +101,8 @@ class Event extends MicrosoftGraph
     {
         $mailable->buildEnvelope();
 
-        return Http::withToken($this->getAccessToken())
+        return Http::graph()
+            ->withToken($this->getAccessToken())
             ->withUrlParameters([
                 'user_id' => $mailable->envelope()->from->address,
             ])
@@ -74,6 +128,7 @@ class Event extends MicrosoftGraph
                         '@odata.type' => 'microsoft.graph.emailAddress',
                     ],
                 ],
+                'recurrence' => $mailable->envelope()->recurrence ?? null,
             ])
             ->throwUnlessStatus(201)
             ->collect();
@@ -84,7 +139,8 @@ class Event extends MicrosoftGraph
      */
     public function cancel(string $eventId, string $message = null): Collection
     {
-        return Http::withToken($this->getAccessToken())
+        return Http::graph()
+            ->withToken($this->getAccessToken())
             ->withUrlParameters([
                 'user_id' => $this->email,
                 'event_id' => $eventId,
@@ -102,7 +158,8 @@ class Event extends MicrosoftGraph
      */
     public function accept(string $eventId, string $message = null): Collection
     {
-        return Http::withToken($this->getAccessToken())
+        return Http::graph()
+            ->withToken($this->getAccessToken())
             ->withUrlParameters([
                 'user_id' => $this->email,
                 'event_id' => $eventId,
@@ -120,7 +177,8 @@ class Event extends MicrosoftGraph
      */
     public function decline(string $eventId, string $message = null): Collection
     {
-        return Http::withToken($this->getAccessToken())
+        return Http::graph()
+            ->withToken($this->getAccessToken())
             ->withUrlParameters([
                 'user_id' => $this->email,
                 'event_id' => $eventId,
@@ -141,7 +199,8 @@ class Event extends MicrosoftGraph
      */
     public function update(string $eventId, Mailable $mailable,): Collection
     {
-        return Http::withToken($this->getAccessToken())
+        return Http::graph()
+            ->withToken($this->getAccessToken())
             ->withUrlParameters([
                 'user_id' => $mailable->envelope()->from->address,
                 'event_id' => $eventId,

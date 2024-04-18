@@ -34,7 +34,8 @@ class Calendar extends MicrosoftGraph
      */
     public function get(): Collection
     {
-        $data = Http::withToken($this->getAccessToken())
+        $data = Http::graph()
+            ->withToken($this->getAccessToken())
             ->withUrlParameters([
                 'user_id' => $this->email,
             ])

@@ -40,6 +40,7 @@ class CalendarEvent extends Mailable
                     '@odata.type' => 'microsoft.graph.emailAddress',
                 ],
             ],
+            'recurrence' => $this->envelope()->recurrence,
         ];
     }
 
@@ -114,11 +115,17 @@ class CalendarEvent extends Mailable
      */
     protected function buildMarkdownView(): array
     {
+        $markdown = Container::getInstance()->make(Markdown::class);
+
+        if (isset($this->theme)) {
+            $markdown->theme($this->theme);
+        }
+
         $data = $this->buildViewData();
 
         return [
-            'html' => $this->buildMarkdownHtml($data),
-            'text' => $this->buildMarkdownText($data),
+            'html' => $markdown->render($this->markdown, $data),
+            'text' => $this->buildMarkdownText($markdown, $data),
         ];
     }
 
@@ -130,20 +137,10 @@ class CalendarEvent extends Mailable
         );
     }
 
-    protected function buildMarkdownText($markdown): Closure
+    protected function buildMarkdownText($markdown, $data): HtmlString|string|Closure
     {
-        return function ($data) use ($markdown) {
-            if (isset($data['message'])) {
-                $data = array_merge($data, [
-                    'message' => new TextMessage($data['message']),
-                ]);
-            }
-
-            return $this->textView ?? $this->markdownRenderer()->renderText(
-                $this->markdown,
-                array_merge($data, $markdown)
-            );
-        };
+        return $this->textView
+            ?? $markdown->renderText($this->markdown, $data);
     }
 
     protected function markdownRenderer()

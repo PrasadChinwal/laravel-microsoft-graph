@@ -3,6 +3,7 @@
 namespace PrasadChinwal\MicrosoftGraph\Endpoints;
 
 use Illuminate\Http\Client\RequestException;
+use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Http;
 use PrasadChinwal\MicrosoftGraph\MicrosoftGraph;
 
@@ -11,7 +12,10 @@ class Outlook extends MicrosoftGraph
     protected string $enpoint = 'https://graph.microsoft.com/v1.0/';
 
     /**
-     * @return \Illuminate\Support\Collection
+     * @param string $subject
+     * @param string $message
+     * @param array|string $to
+     * @return Collection
      *
      * @throws RequestException
      */

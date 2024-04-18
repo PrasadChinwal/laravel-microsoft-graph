@@ -2,7 +2,9 @@
 
 namespace PrasadChinwal\MicrosoftGraph;
 
+use Illuminate\Support\Facades\Http;
 use Illuminate\Support\ServiceProvider;
+use Illuminate\Support\Str;
 use PrasadChinwal\MicrosoftGraph\Commands\CreateGraphEventCommand;
 
 class MicrosoftGraphServiceProvider extends ServiceProvider
@@ -27,6 +29,15 @@ class MicrosoftGraphServiceProvider extends ServiceProvider
                 CreateGraphEventCommand::class,
             ]);
         }
+
+        // Microsoft Graph macro for registering timezone..
+        Http::macro('graph', function () {
+            return Http::withHeaders([
+                'Prefer' => Str::of('outlook.timezone=')
+                    ->append(Str::wrap(config('microsoft-graph.timezone'), '"'))
+                    ->value(),
+            ]);
+        });
 
         $this->app->singleton('graph', function ($app) {
             return new MicrosoftGraph();

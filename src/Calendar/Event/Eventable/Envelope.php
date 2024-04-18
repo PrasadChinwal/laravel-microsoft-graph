@@ -20,7 +20,7 @@ class Envelope
 
     public object $end;
 
-    public string $location;
+    public ? string $location;
 
     public bool $isOnlineMeeting = false;
 
@@ -30,7 +30,9 @@ class Envelope
 
     public OnlineMeetingProvider $meetingProvider = OnlineMeetingProvider::UNKNOWN;
 
-    public string $timeZone = 'UTC';
+    public string $timeZone;
+
+    public Recurrence $recurrence;
 
     /**
      * Create new instance of calendar event envelope
@@ -40,8 +42,10 @@ class Envelope
         Carbon $start = null, Carbon $end = null, string $location = null,
         bool $isOnlineMeeting = false,
         CalendarEventImportance $importance = CalendarEventImportance::NORMAL,
-        bool $reminder = true, OnlineMeetingProvider $meetingProvider = OnlineMeetingProvider::UNKNOWN
+        bool $reminder = true, OnlineMeetingProvider $meetingProvider = OnlineMeetingProvider::UNKNOWN,
+        Recurrence $recurrence = null
     ) {
+        $this->setTimeZone(null);
         $this->from = is_string($from) ? new Address($from) : $from;
         $this->subject = $subject;
         $this->start = $this->normalizeDates($start);
@@ -52,6 +56,7 @@ class Envelope
         $this->importance = $importance;
         $this->reminder = $reminder;
         $this->meetingProvider = $meetingProvider;
+        $this->recurrence = $recurrence;
     }
 
     public function normalizeDates(Carbon $date): object
@@ -90,4 +95,30 @@ class Envelope
     //        ));
     //        return $this;
     //    }
+
+    /**
+     * Get the time zone of the calendar event
+     *
+     * @return string
+     */
+    public function getTimeZone(): string
+    {
+        return $this->timeZone;
+    }
+
+    /**
+     * Set the time zone for the calendar event
+     *
+     * @param string|null $timeZone The time zone to set
+     * @return void
+     */
+    public function setTimeZone(null|string $timeZone): void
+    {
+        if(!$timeZone) {
+            $this->timeZone = config('app.timezone', 'UTC');
+        }
+        else {
+            $this->timeZone = $timeZone;
+        }
+    }
 }
