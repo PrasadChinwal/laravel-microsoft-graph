@@ -7,7 +7,10 @@ use DateTime;
 use Illuminate\Http\Client\RequestException;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Http;
+use Illuminate\Support\Str;
+use Illuminate\Support\Stringable;
 use PrasadChinwal\MicrosoftGraph\Collections\CalendarCollection;
+use PrasadChinwal\MicrosoftGraph\Collections\EventCollection;
 use PrasadChinwal\MicrosoftGraph\MicrosoftGraph;
 
 class Calendar extends MicrosoftGraph
@@ -19,6 +22,8 @@ class Calendar extends MicrosoftGraph
      */
     protected string $endpoint = 'https://graph.microsoft.com/v1.0/users';
 
+    protected ?string $filter = null;
+
     /**
      * @return $this
      */
@@ -26,6 +31,48 @@ class Calendar extends MicrosoftGraph
     {
         $this->email = $email;
 
+        return $this;
+    }
+
+    /**
+     * @param $field
+     * @param $condition
+     * @param $value
+     * @return $this
+     */
+    public function where($field, $condition, $value): static
+    {
+        $this->filter = Str::of($this->filter)
+            ->whenNotEmpty(function (Stringable $string) {
+                return $string->append(' and ');
+            })
+            ->append($field)
+            ->append(' ')
+            ->append($condition)
+            ->append(' ')
+            ->append(Str::wrap($value, "'"))
+            ->value();
+        return $this;
+    }
+
+    /**
+     * @param $field
+     * @param $condition
+     * @param $value
+     * @return $this
+     */
+    public function orWhere($field, $condition, $value): static
+    {
+        $this->filter = Str::of($this->filter)
+            ->whenNotEmpty(function (Stringable $string) {
+                return $string->append(' or ');
+            })
+            ->append($field)
+            ->append(' ')
+            ->append($condition)
+            ->append(' ')
+            ->append(Str::wrap($value, "'"))
+            ->value();
         return $this;
     }
 
@@ -71,5 +118,30 @@ class Calendar extends MicrosoftGraph
             ])
             ->throwUnlessStatus(200)
             ->collect();
+    }
+
+    /**
+     * GET the calendar view for a specific period
+     *
+     * @param string $start The start date and time of the calendar view
+     * @param string $end The end date and time of the calendar view
+     * @return Collection The collection of calendar events for the specified period
+     * @throws RequestException If there is an error in the request
+     */
+    public function view(string $start, string $end)
+    {
+        $data = Http::graph()
+            ->withToken($this->getAccessToken())
+            ->withUrlParameters([
+                'user_id' => $this->email,
+            ])
+            ->get('https://graph.microsoft.com/v1.0/users/{user_id}/calendar/calendarView', [
+                'startDateTime' => $start,
+                'endDateTime' => $end,
+            ])
+            ->throwUnlessStatus(200)
+            ->collect()
+            ->get('value');
+        return EventCollection::createFromArray($data);
     }
 }

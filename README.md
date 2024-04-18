@@ -55,6 +55,17 @@ A wrapper to integrate Microsoft Graph Api's to a Laravel Application.
     dd($graph);
     ```
 
+3. Get Calendar view for a user : [Documentation](https://learn.microsoft.com/en-us/graph/api/calendar-list-calendarview?view=graph-rest-1.0&tabs=http)
+    > Retrieves the calendar view for the user.
+    ```php
+    MicrosoftGraph::calendar()
+        ->for('user@xyz.com')
+        ->view(
+            start: \Carbon\Carbon::now()->toIso8601String(),
+            end: \Carbon\Carbon::now()->toIso8601String(),
+        );
+    ``` 
+
 ---
 
 ### **Events API**
