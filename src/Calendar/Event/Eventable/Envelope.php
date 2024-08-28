@@ -32,7 +32,21 @@ class Envelope
 
     public string $timeZone;
 
-    public Recurrence $recurrence;
+    public ?Recurrence $recurrence;
+
+    public array $to = [];
+
+    public array $cc = [];
+
+    public array $bcc = [];
+
+    public array $replyTo = [];
+
+    public array $tags = [];
+
+    public array $metadata = [];
+
+    public array $using = [];
 
     /**
      * Create new instance of calendar event envelope
@@ -57,6 +71,7 @@ class Envelope
         $this->reminder = $reminder;
         $this->meetingProvider = $meetingProvider;
         $this->recurrence = $recurrence;
+        $this->to = $attendees;
     }
 
     public function normalizeDates(Carbon $date): object

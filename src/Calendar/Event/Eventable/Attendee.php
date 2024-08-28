@@ -9,6 +9,8 @@ class Attendee
      */
     public string $email;
 
+    public string $address;
+
     /**
      * Invitee Name
      */
@@ -27,5 +29,6 @@ class Attendee
         $this->email = $email;
         $this->name = $name;
         $this->required = $required;
+        $this->address= $email;
     }
 }

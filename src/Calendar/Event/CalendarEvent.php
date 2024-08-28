@@ -23,7 +23,7 @@ class CalendarEvent extends Mailable
             'subject' => $this->envelope()->subject,
             'body' => [
                 'contentType' => 'HTML',
-                'content' => $this->getEmailContent(),
+                'content' => $this->render(),
             ],
             'start' => $this->envelope()->start,
             'end' => $this->envelope()->end,
@@ -115,17 +115,11 @@ class CalendarEvent extends Mailable
      */
     protected function buildMarkdownView(): array
     {
-        $markdown = Container::getInstance()->make(Markdown::class);
-
-        if (isset($this->theme)) {
-            $markdown->theme($this->theme);
-        }
-
         $data = $this->buildViewData();
 
         return [
-            'html' => $markdown->render($this->markdown, $data),
-            'text' => $this->buildMarkdownText($markdown, $data),
+            'html' => $this->buildMarkdownHtml($data),
+            'text' => $this->buildMarkdownText($data),
         ];
     }
 
@@ -137,10 +131,20 @@ class CalendarEvent extends Mailable
         );
     }
 
-    protected function buildMarkdownText($markdown, $data): HtmlString|string|Closure
+    protected function buildMarkdownText($viewData): Closure
     {
-        return $this->textView
-            ?? $markdown->renderText($this->markdown, $data);
+        return function ($data) use ($viewData) {
+            if (isset($data['message'])) {
+                $data = array_merge($data, [
+                    'message' => new TextMessage($data['message']),
+                ]);
+            }
+
+            return $this->textView ?? $this->markdownRenderer()->renderText(
+                $this->markdown,
+                array_merge($data, $viewData)
+            );
+        };
     }
 
     protected function markdownRenderer()
@@ -176,4 +180,5 @@ class CalendarEvent extends Mailable
 
         return (string) $text;
     }
+
 }

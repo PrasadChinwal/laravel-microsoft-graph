@@ -9,7 +9,7 @@ use PrasadChinwal\MicrosoftGraph\MicrosoftGraph;
 
 class Outlook extends MicrosoftGraph
 {
-    protected string $enpoint = 'https://graph.microsoft.com/v1.0/';
+    protected string $endpoint = 'https://graph.microsoft.com/v1.0/';
 
     /**
      * @param string $subject
@@ -24,7 +24,7 @@ class Outlook extends MicrosoftGraph
         return Http::graph()
             ->withToken($this->getAccessToken())
             ->asJson()
-            ->post('https://graph.microsoft.com/v1.0/user/1314e006-65ce-476a-86c1-ea8e1ddbd2db/sendMail', [
+            ->post("$this->endpoint/user/1314e006-65ce-476a-86c1-ea8e1ddbd2db/sendMail", [
                 'message' => [
                     'subject' => $subject,
                     'body' => json_encode([
