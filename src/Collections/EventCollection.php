@@ -3,7 +3,6 @@
 namespace PrasadChinwal\MicrosoftGraph\Collections;
 
 use Illuminate\Support\Collection;
-use PrasadChinwal\MicrosoftGraph\Response\Calendar;
 use PrasadChinwal\MicrosoftGraph\Response\Event;
 
 class EventCollection extends Collection

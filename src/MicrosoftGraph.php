@@ -50,6 +50,7 @@ class MicrosoftGraph
      * Create a new provider instance.
      *
      * @return void
+     *
      * @throws RequestException
      */
     public function __construct()
@@ -178,26 +179,26 @@ class MicrosoftGraph
 
     public function outlook(): Outlook
     {
-        return new Outlook();
+        return new Outlook;
     }
 
     public function calendar(): Calendar
     {
-        return new Calendar();
+        return new Calendar;
     }
 
     public function users(): User
     {
-        return new User();
+        return new User;
     }
 
     public static function event(): Event
     {
-        return new Event();
+        return new Event;
     }
 
     public static function mail(): Mail
     {
-        return new Mail();
+        return new Mail;
     }
 }

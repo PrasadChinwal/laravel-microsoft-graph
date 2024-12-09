@@ -41,7 +41,7 @@ class CreateGraphEventCommand extends GeneratorCommand
      * Build the class with the given name.
      *
      * @param  string  $name
-     * @return string
+     *
      * @throws FileNotFoundException
      */
     protected function buildClass($name): string
@@ -55,27 +55,19 @@ class CreateGraphEventCommand extends GeneratorCommand
 
     /**
      * Get the stub file for the generator.
-     *
-     * @return string
      */
     protected function getStub(): string
     {
-        return  __DIR__ .'/../stubs/CalendarEvent.stub';
+        return __DIR__.'/../stubs/CalendarEvent.stub';
     }
 
-    /**
-     * @param $rootNamespace
-     * @return string
-     */
     protected function getDefaultNamespace($rootNamespace): string
     {
-        return $rootNamespace . '\Mail';
+        return $rootNamespace.'\Mail';
     }
 
     /**
      * Get the console command arguments.
-     *
-     * @return array
      */
     protected function getArguments(): array
     {

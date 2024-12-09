@@ -4,16 +4,15 @@ namespace PrasadChinwal\MicrosoftGraph\Calendar\Event\Eventable\Enums;
 
 enum RecurrenceType: string
 {
-    CONST DAILY = 'daily';
+    const DAILY = 'daily';
 
-    CONST WEEKLY = 'weekly';
+    const WEEKLY = 'weekly';
 
-    CONST ABSOLUTE_MONTHLY = 'absoluteMonthly';
+    const ABSOLUTE_MONTHLY = 'absoluteMonthly';
 
-    CONST RELATIVE_MONTHLY = 'relativeMonthly';
+    const RELATIVE_MONTHLY = 'relativeMonthly';
 
-    CONST ABSOLUTE_YEARLY = 'absoluteYearly';
+    const ABSOLUTE_YEARLY = 'absoluteYearly';
 
-    CONST RELATIVE_YEARLY = 'relativeYearly';
-
+    const RELATIVE_YEARLY = 'relativeYearly';
 }

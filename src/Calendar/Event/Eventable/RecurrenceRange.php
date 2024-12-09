@@ -3,27 +3,24 @@
 namespace PrasadChinwal\MicrosoftGraph\Calendar\Event\Eventable;
 
 use Carbon\Carbon;
-use Date;
 use PrasadChinwal\MicrosoftGraph\Calendar\Event\Eventable\Enums\RecurrenceTypeRange;
 
 class RecurrenceRange
 {
-
     public string $type;
 
     public string $startDate;
 
-    public ? string $endDate;
+    public ?string $endDate;
 
     public string $recurrenceTimeZone;
 
     public int $numberOfOccurrences;
 
     public function __construct(
-        string $type, Carbon $startDate, ? Carbon $endDate,
-        ? string $recurrenceTimeZone = null, int $numberOfOccurrences = 0
-    )
-    {
+        string $type, Carbon $startDate, ?Carbon $endDate,
+        ?string $recurrenceTimeZone = null, int $numberOfOccurrences = 0
+    ) {
         $this->setType($type);
         $this->setStartDate($startDate);
         $this->setEndDate($endDate);
@@ -38,7 +35,7 @@ class RecurrenceRange
 
     public function setNumberOfOccurrences(int $numberOfOccurrences): void
     {
-        if($this->type == RecurrenceTypeRange::NUMBERED && $numberOfOccurrences < 0) {
+        if ($this->type == RecurrenceTypeRange::NUMBERED && $numberOfOccurrences < 0) {
             throw new \InvalidArgumentException('Number of occurrences must be greater than 0');
         }
         $this->numberOfOccurrences = $numberOfOccurrences;
@@ -49,9 +46,9 @@ class RecurrenceRange
         return $this->recurrenceTimeZone;
     }
 
-    public function setRecurrenceTimeZone(null|string $recurrenceTimeZone): void
+    public function setRecurrenceTimeZone(?string $recurrenceTimeZone): void
     {
-        if($recurrenceTimeZone === null) {
+        if ($recurrenceTimeZone === null) {
             $this->recurrenceTimeZone = config('app.timezone');
         } else {
             $this->recurrenceTimeZone = $recurrenceTimeZone;
@@ -65,7 +62,7 @@ class RecurrenceRange
 
     public function setEndDate(?Carbon $endDate): void
     {
-        if($this->type == RecurrenceTypeRange::END_DATE && $endDate === null) {
+        if ($this->type == RecurrenceTypeRange::END_DATE && $endDate === null) {
             throw new \InvalidArgumentException('End date is required!');
         }
         $this->endDate = Carbon::parse($endDate)->format('Y-m-d');

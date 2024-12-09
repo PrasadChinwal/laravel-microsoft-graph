@@ -28,9 +28,6 @@ class Event extends MicrosoftGraph
     }
 
     /**
-     * @param $field
-     * @param $condition
-     * @param $value
      * @return $this
      */
     public function where($field, $condition, $value): static
@@ -45,13 +42,11 @@ class Event extends MicrosoftGraph
             ->append(' ')
             ->append(Str::wrap($value, "'"))
             ->value();
+
         return $this;
     }
 
     /**
-     * @param $field
-     * @param $condition
-     * @param $value
      * @return $this
      */
     public function orWhere($field, $condition, $value): static
@@ -66,12 +61,11 @@ class Event extends MicrosoftGraph
             ->append(' ')
             ->append(Str::wrap($value, "'"))
             ->value();
+
         return $this;
     }
 
     /**
-     * @return \Illuminate\Support\Collection
-     *
      * @throws RequestException
      */
     public function get(): Collection
@@ -81,12 +75,13 @@ class Event extends MicrosoftGraph
             ->withUrlParameters([
                 'user_id' => $this->email,
             ])
-            ->get('https://graph.microsoft.com/v1.0/users/{user_id}/events',[
-                '$filter' => $this->filter
+            ->get('https://graph.microsoft.com/v1.0/users/{user_id}/events', [
+                '$filter' => $this->filter,
             ])
             ->throwUnlessStatus(200)
             ->collect()
             ->get('value');
+
         return EventCollection::createFromArray($data);
     }
 
@@ -135,7 +130,7 @@ class Event extends MicrosoftGraph
     /**
      * @throws RequestException
      */
-    public function cancel(string $eventId, string $message = null): Collection
+    public function cancel(string $eventId, ?string $message = null): Collection
     {
         return Http::graph()
             ->withToken($this->getAccessToken())
@@ -154,7 +149,7 @@ class Event extends MicrosoftGraph
     /**
      * @throws RequestException
      */
-    public function accept(string $eventId, string $message = null): Collection
+    public function accept(string $eventId, ?string $message = null): Collection
     {
         return Http::graph()
             ->withToken($this->getAccessToken())
@@ -173,7 +168,7 @@ class Event extends MicrosoftGraph
     /**
      * @throws RequestException
      */
-    public function decline(string $eventId, string $message = null): Collection
+    public function decline(string $eventId, ?string $message = null): Collection
     {
         return Http::graph()
             ->withToken($this->getAccessToken())
@@ -190,12 +185,9 @@ class Event extends MicrosoftGraph
     }
 
     /**
-     * @param  string  $eventId
-     * @param  Mailable  $mailable
-     * @return Collection
      * @throws RequestException
      */
-    public function update(string $eventId, Mailable $mailable,): Collection
+    public function update(string $eventId, Mailable $mailable): Collection
     {
         return Http::graph()
             ->withToken($this->getAccessToken())

@@ -35,9 +35,6 @@ class Calendar extends MicrosoftGraph
     }
 
     /**
-     * @param $field
-     * @param $condition
-     * @param $value
      * @return $this
      */
     public function where($field, $condition, $value): static
@@ -52,13 +49,11 @@ class Calendar extends MicrosoftGraph
             ->append(' ')
             ->append(Str::wrap($value, "'"))
             ->value();
+
         return $this;
     }
 
     /**
-     * @param $field
-     * @param $condition
-     * @param $value
      * @return $this
      */
     public function orWhere($field, $condition, $value): static
@@ -73,6 +68,7 @@ class Calendar extends MicrosoftGraph
             ->append(' ')
             ->append(Str::wrap($value, "'"))
             ->value();
+
         return $this;
     }
 
@@ -123,9 +119,10 @@ class Calendar extends MicrosoftGraph
     /**
      * GET the calendar view for a specific period
      *
-     * @param string $start The start date and time of the calendar view
-     * @param string $end The end date and time of the calendar view
+     * @param  string  $start  The start date and time of the calendar view
+     * @param  string  $end  The end date and time of the calendar view
      * @return Collection The collection of calendar events for the specified period
+     *
      * @throws RequestException If there is an error in the request
      */
     public function view(string $start, string $end)
@@ -142,6 +139,7 @@ class Calendar extends MicrosoftGraph
             ->throwUnlessStatus(200)
             ->collect()
             ->get('value');
+
         return EventCollection::createFromArray($data);
     }
 }

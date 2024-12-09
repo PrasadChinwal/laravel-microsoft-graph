@@ -89,7 +89,7 @@ class Event
     public function __construct(array $items = [])
     {
         foreach ($items as $key => $value) {
-            (object)$this->{$key} = $value;
+            (object) $this->{$key} = $value;
         }
     }
 }

@@ -2,33 +2,31 @@
 
 namespace PrasadChinwal\MicrosoftGraph\Calendar\Event\Eventable;
 
-use Carbon\Carbon;
 use PrasadChinwal\MicrosoftGraph\Calendar\Event\Eventable\Enums\DayOfWeek;
 use PrasadChinwal\MicrosoftGraph\Calendar\Event\Eventable\Enums\RecurrenceType;
 use PrasadChinwal\MicrosoftGraph\Calendar\Event\Eventable\Enums\WeekIndex;
 
 class RecurrencePattern
 {
-    public ? int $dayOfMonth = 0;
+    public ?int $dayOfMonth = 0;
 
-    public ? array $daysOfWeek;
+    public ?array $daysOfWeek;
 
-    public ? string $firstDayOfWeek = DayOfWeek::MONDAY;
+    public ?string $firstDayOfWeek = DayOfWeek::MONDAY;
 
-    public ? string $index = WeekIndex::FIRST;
+    public ?string $index = WeekIndex::FIRST;
 
-    public ? int $interval = 0;
+    public ?int $interval = 0;
 
-    public ? int $month = 1;
+    public ?int $month = 1;
 
     public string $type;
 
     public function __construct(
         string $type, int $dayOfMonth = 0,
-        ? array $dayOfWeek = null, ?string $firstDayOfWeek = DayOfWeek::MONDAY,
-        ? string $index = null, ?int $interval = 0, ?int $month = 1
-    )
-    {
+        ?array $dayOfWeek = null, ?string $firstDayOfWeek = DayOfWeek::MONDAY,
+        ?string $index = null, ?int $interval = 0, ?int $month = 1
+    ) {
         $this->setType($type);
         $this->setDayOfMonth($dayOfMonth);
         $this->setDaysOfWeek($dayOfWeek);
@@ -45,7 +43,7 @@ class RecurrencePattern
 
     public function setDayOfMonth(?int $dayOfMonth): void
     {
-        if(
+        if (
             in_array($this->type, [RecurrenceType::ABSOLUTE_MONTHLY, RecurrenceType::ABSOLUTE_YEARLY]) &&
             $dayOfMonth === 0
         ) {
@@ -61,7 +59,7 @@ class RecurrencePattern
 
     public function setDaysOfWeek(string|array|null $daysOfWeek): void
     {
-        if(
+        if (
             in_array($this->type, [RecurrenceType::WEEKLY, RecurrenceType::RELATIVE_MONTHLY, RecurrenceType::RELATIVE_YEARLY]) &&
             $daysOfWeek === null
         ) {
@@ -87,7 +85,7 @@ class RecurrencePattern
 
     public function setIndex(?string $index): void
     {
-        if(in_array($this->type, [RecurrenceType::RELATIVE_MONTHLY, RecurrenceType::RELATIVE_YEARLY])) {
+        if (in_array($this->type, [RecurrenceType::RELATIVE_MONTHLY, RecurrenceType::RELATIVE_YEARLY])) {
             $this->index = $index;
         }
     }
@@ -109,7 +107,7 @@ class RecurrencePattern
 
     public function setMonth(?int $month): void
     {
-        if($month < 1 || $month > 12) {
+        if ($month < 1 || $month > 12) {
             throw new \InvalidArgumentException('Invalid month! Month must be between 1 and 12');
         }
         $this->month = $month;

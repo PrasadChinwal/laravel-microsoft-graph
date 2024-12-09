@@ -3,7 +3,6 @@
 namespace PrasadChinwal\MicrosoftGraph\Endpoints;
 
 use Illuminate\Http\Client\RequestException;
-use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Http;
 use PrasadChinwal\MicrosoftGraph\MicrosoftGraph;
 
@@ -12,11 +11,6 @@ class Outlook extends MicrosoftGraph
     protected string $endpoint = 'https://graph.microsoft.com/v1.0/';
 
     /**
-     * @param string $subject
-     * @param string $message
-     * @param array|string $to
-     * @return Collection
-     *
      * @throws RequestException
      */
     public function sendEmail(string $subject, string $message, array|string $to): \Illuminate\Support\Collection

@@ -4,14 +4,13 @@ namespace PrasadChinwal\MicrosoftGraph\Calendar\Event\Eventable\Enums;
 
 enum WeekIndex: string
 {
-    CONST FIRST = 'first';
+    const FIRST = 'first';
 
-    CONST SECOND = 'second';
+    const SECOND = 'second';
 
-    CONST THIRD = 'third';
+    const THIRD = 'third';
 
-    CONST FOURTH = 'fourth';
+    const FOURTH = 'fourth';
 
-    CONST LAST = 'last';
-
+    const LAST = 'last';
 }

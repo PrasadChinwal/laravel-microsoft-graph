@@ -9,9 +9,6 @@ use PrasadChinwal\MicrosoftGraph\Commands\CreateGraphEventCommand;
 
 class MicrosoftGraphServiceProvider extends ServiceProvider
 {
-    /**
-     * @return void
-     */
     public function register(): void
     {
         $this->publishes([
@@ -19,9 +16,6 @@ class MicrosoftGraphServiceProvider extends ServiceProvider
         ], 'microsoft-graph-config');
     }
 
-    /**
-     * @return void
-     */
     public function boot(): void
     {
         if ($this->app->runningInConsole()) {
@@ -40,7 +34,7 @@ class MicrosoftGraphServiceProvider extends ServiceProvider
         });
 
         $this->app->singleton('graph', function ($app) {
-            return new MicrosoftGraph();
+            return new MicrosoftGraph;
         });
     }
 }

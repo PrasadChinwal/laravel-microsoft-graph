@@ -2,11 +2,11 @@
 
 namespace PrasadChinwal\MicrosoftGraph\Calendar\Event\Eventable\Enums;
 
-enum RecurrenceTypeRange:string
+enum RecurrenceTypeRange: string
 {
-    CONST END_DATE = 'endDate';
+    const END_DATE = 'endDate';
 
-    CONST NO_END = 'noEnd';
+    const NO_END = 'noEnd';
 
-    CONST NUMBERED = 'numbered';
+    const NUMBERED = 'numbered';
 }

@@ -180,5 +180,4 @@ class CalendarEvent extends Mailable
 
         return (string) $text;
     }
-
 }

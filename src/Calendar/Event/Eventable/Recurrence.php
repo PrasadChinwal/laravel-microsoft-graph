@@ -9,11 +9,9 @@ class Recurrence
     public RecurrenceRange $range;
 
     public function __construct(
-       $pattern, $range
-    )
-    {
+        $pattern, $range
+    ) {
         $this->pattern = $pattern;
         $this->range = $range;
     }
-
 }

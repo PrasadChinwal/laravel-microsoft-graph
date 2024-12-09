@@ -24,11 +24,11 @@ class Attendee
     /**
      * Create a new invitee instance
      */
-    public function __construct(string $email, string $name = null, bool $required = false)
+    public function __construct(string $email, ?string $name = null, bool $required = false)
     {
         $this->email = $email;
         $this->name = $name;
         $this->required = $required;
-        $this->address= $email;
+        $this->address = $email;
     }
 }
