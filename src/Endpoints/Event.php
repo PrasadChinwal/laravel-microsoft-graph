@@ -3,13 +3,12 @@
 namespace PrasadChinwal\MicrosoftGraph\Endpoints;
 
 use Illuminate\Contracts\Mail\Mailable;
-use Illuminate\Http\Client\RequestException;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Str;
 use Illuminate\Support\Stringable;
-use PrasadChinwal\MicrosoftGraph\Collections\EventCollection;
 use PrasadChinwal\MicrosoftGraph\MicrosoftGraph;
+use PrasadChinwal\MicrosoftGraph\Response\Events\EventCollection;
 
 class Event extends MicrosoftGraph
 {
@@ -79,10 +78,9 @@ class Event extends MicrosoftGraph
                 '$filter' => $this->filter,
             ])
             ->throwUnlessStatus(200)
-            ->collect()
-            ->get('value');
+            ->collect('value');
 
-        return EventCollection::createFromArray($data);
+        return \PrasadChinwal\MicrosoftGraph\Response\Events\Event::collect($data);
     }
 
     // 300 S 9 th street

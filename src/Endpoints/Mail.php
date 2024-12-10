@@ -10,6 +10,7 @@ class Mail extends MicrosoftGraph
     protected string $email;
 
     /**
+     * @param string $email
      * @return Mail
      */
     public function for(string $email): static

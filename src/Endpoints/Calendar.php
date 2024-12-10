@@ -10,8 +10,8 @@ use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Str;
 use Illuminate\Support\Stringable;
 use PrasadChinwal\MicrosoftGraph\Collections\CalendarCollection;
-use PrasadChinwal\MicrosoftGraph\Collections\EventCollection;
 use PrasadChinwal\MicrosoftGraph\MicrosoftGraph;
+use PrasadChinwal\MicrosoftGraph\Response\Events\EventCollection;
 
 class Calendar extends MicrosoftGraph
 {
@@ -137,9 +137,8 @@ class Calendar extends MicrosoftGraph
                 'endDateTime' => $end,
             ])
             ->throwUnlessStatus(200)
-            ->collect()
-            ->get('value');
+            ->collect('value');
 
-        return EventCollection::createFromArray($data);
+        return \PrasadChinwal\MicrosoftGraph\Response\Events\Event::collect($data);
     }
 }

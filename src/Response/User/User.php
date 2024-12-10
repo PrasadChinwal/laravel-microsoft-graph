@@ -16,6 +16,7 @@ class User extends Data
         public ?string $officeLocation,
         public ?string $preferredLanguage,
         public ?string $surname,
+        public ?string $userPrincipalName,
         public ?string $id,
     ) {}
 }

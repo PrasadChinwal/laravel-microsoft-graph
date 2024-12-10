@@ -2,7 +2,6 @@
 
 namespace PrasadChinwal\MicrosoftGraph\Endpoints;
 
-use Illuminate\Http\Client\RequestException;
 use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Str;
 use PrasadChinwal\MicrosoftGraph\Contracts\HasLicenses;
@@ -31,28 +30,33 @@ class User extends MicrosoftGraph implements HasLicenses, HasProfilePhoto
     }
 
     /**
-     * @throws RequestException
+     * @return array|\Illuminate\Contracts\Pagination\CursorPaginator|\Illuminate\Contracts\Pagination\Paginator|\Illuminate\Pagination\AbstractCursorPaginator|\Illuminate\Pagination\AbstractPaginator|\Illuminate\Support\Collection|\Illuminate\Support\Enumerable|\Illuminate\Support\LazyCollection|\Spatie\LaravelData\CursorPaginatedDataCollection|\Spatie\LaravelData\DataCollection|\Spatie\LaravelData\PaginatedDataCollection
      */
-    public function get(?string $email = null): \PrasadChinwal\MicrosoftGraph\Response\User\User
+    public function get(): array|\Illuminate\Contracts\Pagination\CursorPaginator|\Illuminate\Contracts\Pagination\Paginator|\Illuminate\Pagination\AbstractCursorPaginator|\Illuminate\Pagination\AbstractPaginator|\Illuminate\Support\Collection|\Illuminate\Support\Enumerable|\Illuminate\Support\LazyCollection|\Spatie\LaravelData\CursorPaginatedDataCollection|\Spatie\LaravelData\DataCollection|\Spatie\LaravelData\PaginatedDataCollection
     {
-        $url = $this->endpoint;
-        if (Str::length($email) > 0) {
-            $url = $url.'/'.$email;
+        $response = Http::withToken($this->getAccessToken())
+            ->get($this->endpoint)
+            ->throwUnlessStatus(200)
+            ->collect('value');
+
+        return \PrasadChinwal\MicrosoftGraph\Response\User\User::collect($response);
+    }
+
+    /**
+     *
+     * @throws \Exception
+     */
+    public function find(string $email): \PrasadChinwal\MicrosoftGraph\Response\User\User
+    {
+        if (Str::length($email) == 0) {
+            throw new \Exception('Email address cannot be empty!');
         }
 
         $response = Http::withToken($this->getAccessToken())
-            ->get($url)
+            ->get( $this->endpoint . '/'.$email)
             ->throwUnlessStatus(200)
             ->collect();
 
         return \PrasadChinwal\MicrosoftGraph\Response\User\User::from($response);
-    }
-
-    /**
-     * @throws RequestException
-     */
-    public function find(string $email): \PrasadChinwal\MicrosoftGraph\Response\User\User
-    {
-        return $this->get($email);
     }
 }
