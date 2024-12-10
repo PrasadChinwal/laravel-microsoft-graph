@@ -59,4 +59,24 @@ class User extends MicrosoftGraph implements HasLicenses, HasProfilePhoto
 
         return \PrasadChinwal\MicrosoftGraph\Response\User\User::from($response);
     }
+
+    /**
+     * @throws \Exception
+     */
+    public function update(string $email, \PrasadChinwal\MicrosoftGraph\Builder\User\User $user): bool
+    {
+        if (Str::length($email) == 0) {
+            throw new \Exception('Email address cannot be empty!');
+        }
+
+        $user = array_filter((array)$user);
+
+        $response = Http::withToken($this->getAccessToken())
+            ->patch( $this->endpoint . '/'.$email, $user)
+            ->throwUnlessStatus(204);
+        if ($response->status() == 204) {
+            return true;
+        }
+        return false;
+    }
 }
