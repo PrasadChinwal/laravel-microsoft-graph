@@ -11,7 +11,7 @@ class Mail extends MicrosoftGraph
 {
     protected string $email;
 
-    protected ?string $filters = null;
+    protected ?string $filter = null;
 
     protected ?int $top = 10;
 
@@ -26,7 +26,15 @@ class Mail extends MicrosoftGraph
         return $this;
     }
 
-    public function where(string $field, string $operator = null, string $value)
+    /**
+     * Add a WHERE condition to the filter.
+     *
+     * @param  string  $field  The field name to filter on
+     * @param  string|null  $operator  The operator (=, !=, >, <, >=, <=)
+     * @param  string  $value  The value to compare against
+     * @return $this
+     */
+    public function where(string $field, ?string $operator = null, string $value): static
     {
         $operator = match ($operator) {
             '!=' => 'ne',
@@ -36,47 +44,61 @@ class Mail extends MicrosoftGraph
             '<=' => 'le',
             default => 'eq',
         };
-        $filter = Str::of($this->filters);
-        if($filter->isEmpty()) {
-            $filter = $filter // ->append('?$filter=')
+
+        $filterString = Str::of($this->filter);
+
+        if ($filterString->isEmpty()) {
+            $filterString = $filterString
                 ->append($field)
                 ->append(' ')
                 ->append($operator)
                 ->append(' ')
                 ->append($value);
         } else {
-            $filter = $filter->append(' and ')
+            $filterString = $filterString
+                ->append(' and ')
                 ->append($field)
                 ->append(' ')
                 ->append($operator)
                 ->append(' ')
                 ->append($value);
         }
-        $this->filters = $filter->value();
-        return $this;
-    }
 
-    public function top(int $top): static
-    {
-        $this->top = $top;
+        $this->filter = $filterString->value();
+
         return $this;
     }
 
     /**
+     * Set the maximum number of results to return.
+     *
+     * @param  int  $top  The maximum number of results
+     * @return $this
+     */
+    public function top(int $top): static
+    {
+        $this->top = $top;
+
+        return $this;
+    }
+
+    /**
+     * Get messages for the user with applied filters.
+     *
      * @return \Illuminate\Support\Collection
      *
      * @throws \Illuminate\Http\Client\RequestException
      */
-    public function get()
+    public function get(): \Illuminate\Support\Collection
     {
         return Http::graph()
             ->withToken($this->getAccessToken())
             ->withUrlParameters([
                 'user_id' => $this->email,
             ])
-            ->when(!empty($this->filters), function ($http) {
+            ->when(! empty($this->filter), function ($http) {
                 return $http->withQueryParameters([
-                    '$filter' => $this->filters,
+                    '$filter' => $this->filter,
                 ]);
             })
             ->withQueryParameters([

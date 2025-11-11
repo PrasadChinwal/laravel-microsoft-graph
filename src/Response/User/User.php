@@ -22,7 +22,7 @@ class User extends Data
         public ?string $givenName,
         public ?string $employeeHireDate,
         public ?string $employeeLeaveDateTime,
-        public ?string $interests,
+        public ?array $interests,
         public ?string $jobTitle,
         public ?string $mail,
         public ?string $mailNickname,

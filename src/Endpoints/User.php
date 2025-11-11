@@ -3,9 +3,9 @@
 namespace PrasadChinwal\MicrosoftGraph\Endpoints;
 
 use Illuminate\Support\Facades\Http;
-use Illuminate\Support\Str;
 use PrasadChinwal\MicrosoftGraph\Contracts\HasLicenses;
 use PrasadChinwal\MicrosoftGraph\Contracts\HasProfilePhoto;
+use PrasadChinwal\MicrosoftGraph\Exceptions\InvalidEmailException;
 use PrasadChinwal\MicrosoftGraph\MicrosoftGraph;
 use PrasadChinwal\MicrosoftGraph\Traits\HasProfilePhoto as ProfilePhoto;
 use PrasadChinwal\MicrosoftGraph\Traits\LicenseDetails;
@@ -43,17 +43,17 @@ class User extends MicrosoftGraph implements HasLicenses, HasProfilePhoto
     }
 
     /**
+     * Find a specific user by email address.
      *
-     * @throws \Exception
+     * @throws InvalidEmailException
+     * @throws \Illuminate\Http\Client\RequestException
      */
     public function find(string $email): \PrasadChinwal\MicrosoftGraph\Response\User\User
     {
-        if (Str::length($email) == 0) {
-            throw new \Exception('Email address cannot be empty!');
-        }
+        $this->validateEmail($email);
 
         $response = Http::withToken($this->getAccessToken())
-            ->get( $this->endpoint . '/'.$email)
+            ->get($this->endpoint.'/'.$email)
             ->throwUnlessStatus(200)
             ->collect();
 
@@ -61,22 +61,38 @@ class User extends MicrosoftGraph implements HasLicenses, HasProfilePhoto
     }
 
     /**
-     * @throws \Exception
+     * Update a user's properties.
+     *
+     * @throws InvalidEmailException
+     * @throws \Illuminate\Http\Client\RequestException
      */
     public function update(string $email, \PrasadChinwal\MicrosoftGraph\Builder\User\User $user): bool
     {
-        if (Str::length($email) == 0) {
-            throw new \Exception('Email address cannot be empty!');
-        }
+        $this->validateEmail($email);
 
-        $user = array_filter((array)$user);
+        // Convert user object to array and filter out null values
+        $userData = array_filter(get_object_vars($user), fn($value) => $value !== null);
 
-        $response = Http::withToken($this->getAccessToken())
-            ->patch( $this->endpoint . '/'.$email, $user)
+        Http::withToken($this->getAccessToken())
+            ->patch($this->endpoint.'/'.$email, $userData)
             ->throwUnlessStatus(204);
-        if ($response->status() == 204) {
-            return true;
+
+        return true;
+    }
+
+    /**
+     * Validate email address.
+     *
+     * @throws InvalidEmailException
+     */
+    protected function validateEmail(string $email): void
+    {
+        if (empty($email)) {
+            throw InvalidEmailException::empty();
         }
-        return false;
+
+        if (! filter_var($email, FILTER_VALIDATE_EMAIL)) {
+            throw InvalidEmailException::invalidFormat($email);
+        }
     }
 }

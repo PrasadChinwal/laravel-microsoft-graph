@@ -7,14 +7,14 @@ use DateTime;
 use Illuminate\Http\Client\RequestException;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Http;
-use Illuminate\Support\Str;
-use Illuminate\Support\Stringable;
 use PrasadChinwal\MicrosoftGraph\Collections\CalendarCollection;
 use PrasadChinwal\MicrosoftGraph\MicrosoftGraph;
-use PrasadChinwal\MicrosoftGraph\Response\Events\EventCollection;
+use PrasadChinwal\MicrosoftGraph\Traits\HasQueryFilters;
 
 class Calendar extends MicrosoftGraph
 {
+    use HasQueryFilters;
+
     protected string $email;
 
     /**
@@ -22,52 +22,14 @@ class Calendar extends MicrosoftGraph
      */
     protected string $endpoint = 'https://graph.microsoft.com/v1.0/users';
 
-    protected ?string $filter = null;
-
     /**
+     * Set the email address for the user.
+     *
      * @return $this
      */
     public function for(string $email): static
     {
         $this->email = $email;
-
-        return $this;
-    }
-
-    /**
-     * @return $this
-     */
-    public function where($field, $condition, $value): static
-    {
-        $this->filter = Str::of($this->filter)
-            ->whenNotEmpty(function (Stringable $string) {
-                return $string->append(' and ');
-            })
-            ->append($field)
-            ->append(' ')
-            ->append($condition)
-            ->append(' ')
-            ->append(Str::wrap($value, "'"))
-            ->value();
-
-        return $this;
-    }
-
-    /**
-     * @return $this
-     */
-    public function orWhere($field, $condition, $value): static
-    {
-        $this->filter = Str::of($this->filter)
-            ->whenNotEmpty(function (Stringable $string) {
-                return $string->append(' or ');
-            })
-            ->append($field)
-            ->append(' ')
-            ->append($condition)
-            ->append(' ')
-            ->append(Str::wrap($value, "'"))
-            ->value();
 
         return $this;
     }

@@ -3,9 +3,10 @@
 namespace PrasadChinwal\MicrosoftGraph;
 
 use Illuminate\Http\Client\RequestException;
-use Illuminate\Http\Request;
 use Illuminate\Support\Collection;
+use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Http;
+use PrasadChinwal\MicrosoftGraph\Endpoints\Attachment;
 use PrasadChinwal\MicrosoftGraph\Endpoints\Calendar;
 use PrasadChinwal\MicrosoftGraph\Endpoints\Event;
 use PrasadChinwal\MicrosoftGraph\Endpoints\Mail;
@@ -15,31 +16,14 @@ use PrasadChinwal\MicrosoftGraph\Endpoints\User;
 class MicrosoftGraph
 {
     /**
-     * The HTTP Client instance.
-     *
-     * @var Http
+     * Cache key for storing the access token.
      */
-    protected $httpClient;
+    protected const CACHE_KEY = 'microsoft_graph_access_token';
 
     /**
-     * The custom parameters to be sent with the request.
+     * Cache key for storing the token expiry timestamp.
      */
-    protected array $parameters = [];
-
-    /**
-     * The scopes being requested.
-     */
-    protected array $scopes = [];
-
-    /**
-     * The separating character for the requested scopes.
-     */
-    protected string $scopeSeparator = ',';
-
-    /**
-     * The cached user instance.
-     */
-    protected $user;
+    protected const CACHE_EXPIRY_KEY = 'microsoft_graph_token_expiry';
 
     /**
      * Access Token for microsoft graph api
@@ -55,7 +39,7 @@ class MicrosoftGraph
      */
     public function __construct()
     {
-        $this->getAccessTokenResponse();
+        $this->accessToken = $this->getOrRefreshAccessToken();
     }
 
     protected function getTenantId()
@@ -82,18 +66,65 @@ class MicrosoftGraph
     }
 
     /**
+     * Get cached access token or refresh if expired.
+     *
+     * @throws RequestException
+     */
+    protected function getOrRefreshAccessToken(): string
+    {
+        // Check if token exists and is still valid
+        $cachedToken = Cache::get(self::CACHE_KEY);
+        $expiryTime = Cache::get(self::CACHE_EXPIRY_KEY);
+
+        if ($cachedToken && $expiryTime && now()->timestamp < $expiryTime) {
+            return $cachedToken;
+        }
+
+        // Token expired or doesn't exist, fetch new one
+        $tokenData = $this->fetchAccessTokenFromApi();
+
+        return $tokenData['access_token'];
+    }
+
+    /**
+     * Fetch a fresh access token from the Microsoft API.
+     *
+     * @throws RequestException
+     */
+    protected function fetchAccessTokenFromApi(): array
+    {
+        $response = Http::asForm()
+            ->post($this->getTokenUrl(), $this->getTokenFields())
+            ->throwUnlessStatus(200)
+            ->json();
+
+        $accessToken = $response['access_token'];
+        $expiresIn = $response['expires_in'] ?? 3600;
+
+        // Cache token with 5 minute buffer before actual expiry
+        $cacheUntil = now()->addSeconds($expiresIn - 300);
+        $expiryTimestamp = now()->addSeconds($expiresIn)->timestamp;
+
+        Cache::put(self::CACHE_KEY, $accessToken, $cacheUntil);
+        Cache::put(self::CACHE_EXPIRY_KEY, $expiryTimestamp, $cacheUntil);
+
+        return [
+            'access_token' => $accessToken,
+            'expires_in' => $expiresIn,
+        ];
+    }
+
+    /**
      * Get the access token response for the given code.
      *
+     * @deprecated Use getOrRefreshAccessToken() instead
      * @throws RequestException
      */
     public function getAccessTokenResponse(): Collection
     {
-        $response = Http::asForm()
-            ->post($this->getTokenUrl(), $this->getTokenFields())
-            ->throwUnlessStatus(200);
-        $this->accessToken = $response->collect()->get('access_token');
+        $tokenData = $this->fetchAccessTokenFromApi();
 
-        return $response->collect();
+        return collect($tokenData);
     }
 
     /**
@@ -110,7 +141,7 @@ class MicrosoftGraph
     }
 
     /**
-     * Get the access token response for the given code.
+     * Get the access token.
      */
     public function getAccessToken(): string
     {
@@ -118,63 +149,13 @@ class MicrosoftGraph
     }
 
     /**
-     * Merge the scopes of the requested access.
-     *
-     * @param  array|string  $scopes
-     * @return $this
+     * Clear the cached access token.
+     * Useful for testing or forcing token refresh.
      */
-    public function scopes($scopes)
+    public function clearTokenCache(): void
     {
-        $this->scopes = array_unique(array_merge($this->scopes, (array) $scopes));
-
-        return $this;
-    }
-
-    /**
-     * Set the scopes of the requested access.
-     *
-     * @param  array|string  $scopes
-     * @return $this
-     */
-    public function setScopes($scopes)
-    {
-        $this->scopes = array_unique((array) $scopes);
-
-        return $this;
-    }
-
-    /**
-     * Get the current scopes.
-     *
-     * @return array
-     */
-    public function getScopes()
-    {
-        return $this->scopes;
-    }
-
-    /**
-     * Set the request instance.
-     *
-     * @return $this
-     */
-    public function setRequest(Request $request)
-    {
-        $this->request = $request;
-
-        return $this;
-    }
-
-    /**
-     * Set the custom parameters of the request.
-     *
-     * @return $this
-     */
-    public function with(array $parameters): static
-    {
-        $this->parameters = $parameters;
-
-        return $this;
+        Cache::forget(self::CACHE_KEY);
+        Cache::forget(self::CACHE_EXPIRY_KEY);
     }
 
     public function outlook(): Outlook
@@ -192,13 +173,18 @@ class MicrosoftGraph
         return new User;
     }
 
-    public static function event(): Event
+    public function event(): Event
     {
         return new Event;
     }
 
-    public static function mail(): Mail
+    public function mail(): Mail
     {
         return new Mail;
+    }
+
+    public function attachments(): Attachment
+    {
+        return new Attachment;
     }
 }

@@ -5,18 +5,18 @@ namespace PrasadChinwal\MicrosoftGraph\Endpoints;
 use Illuminate\Contracts\Mail\Mailable;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Http;
-use Illuminate\Support\Str;
-use Illuminate\Support\Stringable;
 use PrasadChinwal\MicrosoftGraph\MicrosoftGraph;
-use PrasadChinwal\MicrosoftGraph\Response\Events\EventCollection;
+use PrasadChinwal\MicrosoftGraph\Traits\HasQueryFilters;
 
 class Event extends MicrosoftGraph
 {
+    use HasQueryFilters;
+
     protected string $email;
 
-    protected ?string $filter = null;
-
     /**
+     * Set the email address for the user.
+     *
      * @return $this
      */
     public function for(string $email): static
@@ -27,44 +27,8 @@ class Event extends MicrosoftGraph
     }
 
     /**
-     * @return $this
-     */
-    public function where($field, $condition, $value): static
-    {
-        $this->filter = Str::of($this->filter)
-            ->whenNotEmpty(function (Stringable $string) {
-                return $string->append(' and ');
-            })
-            ->append($field)
-            ->append(' ')
-            ->append($condition)
-            ->append(' ')
-            ->append(Str::wrap($value, "'"))
-            ->value();
-
-        return $this;
-    }
-
-    /**
-     * @return $this
-     */
-    public function orWhere($field, $condition, $value): static
-    {
-        $this->filter = Str::of($this->filter)
-            ->whenNotEmpty(function (Stringable $string) {
-                return $string->append(' or ');
-            })
-            ->append($field)
-            ->append(' ')
-            ->append($condition)
-            ->append(' ')
-            ->append(Str::wrap($value, "'"))
-            ->value();
-
-        return $this;
-    }
-
-    /**
+     * Get events for the user with applied filters.
+     *
      * @throws RequestException
      */
     public function get(): Collection
@@ -83,9 +47,9 @@ class Event extends MicrosoftGraph
         return \PrasadChinwal\MicrosoftGraph\Response\Events\Event::collect($data);
     }
 
-    // 300 S 9 th street
-
     /**
+     * Create a new event from a Mailable instance.
+     *
      * @throws RequestException
      */
     public function create(Mailable $mailable): Collection
