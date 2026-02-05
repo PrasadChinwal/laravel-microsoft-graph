@@ -10,7 +10,9 @@ use PrasadChinwal\MicrosoftGraph\Endpoints\Attachment;
 use PrasadChinwal\MicrosoftGraph\Endpoints\Calendar;
 use PrasadChinwal\MicrosoftGraph\Endpoints\Event;
 use PrasadChinwal\MicrosoftGraph\Endpoints\Mail;
+use PrasadChinwal\MicrosoftGraph\Endpoints\NumberAssignmentRequest;
 use PrasadChinwal\MicrosoftGraph\Endpoints\Outlook;
+use PrasadChinwal\MicrosoftGraph\Endpoints\TeamConfigurationRequest;
 use PrasadChinwal\MicrosoftGraph\Endpoints\User;
 
 class MicrosoftGraph
@@ -186,5 +188,15 @@ class MicrosoftGraph
     public function attachments(): Attachment
     {
         return new Attachment;
+    }
+
+    public function teamConfiguration(): TeamConfigurationRequest
+    {
+        return new TeamConfigurationRequest;
+    }
+
+    public function numberAssignement(): NumberAssignmentRequest
+    {
+        return new NumberAssignmentRequest;
     }
 }

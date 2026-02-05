@@ -556,6 +556,51 @@ MicrosoftGraph::outlook()
 
 ---
 
+## Team Configuration
+
+### Get User Team Configuration
+
+**API Reference:** [User Team Configuration](https://learn.microsoft.com/en-us/graph/api/teamsadministration-teamsadminroot-list-userconfigurations?view=graph-rest-beta&tabs=http)
+
+```php
+use PrasadChinwal\MicrosoftGraph\Facades\MicrosoftGraph;
+$data = MicrosoftGraph::teamConfiguration()
+        ->where(field: 'id', operator: '=', value: '109c9587-bdf8-4f84-ba53-01c7ab2efa22')
+        ->get();
+    dd($data->first()->telephoneNumbers->pluck('telephoneNumber'));
+```
+
+### Helper Methods
+
+Check is users Enterprise Voice is enabled:
+
+```php
+use PrasadChinwal\MicrosoftGraph\Facades\MicrosoftGraph;
+$data = MicrosoftGraph::teamConfiguration()
+        ->where(field: 'id', operator: '=', value: '109c9587-bdf8-4f84-ba53-01c7ab2efa22')
+        ->get();
+    dd($data->first()->hasEnterpriseVoiceEnabled());
+```
+
+---
+
+## Number Assignments
+
+### List numberAssignments
+
+**API Reference:** [List numberAssignments](https://learn.microsoft.com/en-us/graph/api/teamsadministration-telephonenumbermanagementroot-list-numberassignments?view=graph-rest-beta&tabs=http)
+
+```php
+use PrasadChinwal\MicrosoftGraph\Facades\MicrosoftGraph;
+$data = MicrosoftGraph::numberAssignement()
+        // ->where(field: 'assignmentStatus', operator: '=', value: 'unassigned')
+        // ->where('telephoneNumber', '=', '+222222222')
+        ->get();
+    dd($data);
+```
+
+---
+
 ## Attachment Management
 
 Microsoft Graph API supports three types of attachments:
