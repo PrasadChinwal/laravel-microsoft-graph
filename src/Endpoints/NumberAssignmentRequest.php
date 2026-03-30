@@ -17,13 +17,16 @@ class NumberAssignmentRequest extends MicrosoftGraph
     /**
      * Add a WHERE condition to the filter.
      *
-     * @param  string  $field  The field name to filter on
-     * @param  string|null  $operator  The operator (=, !=, >, <, >=, <=)
-     * @param  string  $value  The value to compare against
+     * @param string $field The field name to filter on
+     * @param string|null $operator The operator (=, !=, >, <, >=, <=)
+     * @param string|null $value The value to compare against
      * @return $this
+     * @throws \Throwable
      */
-    public function where(string $field, ?string $operator = null, string $value): static
+    public function where(string $field, ?string $operator = null, ?string $value = null): static
     {
+        throw_if(empty($value), new \InvalidArgumentException('Value cannot be empty'));
+
         $operator = match ($operator) {
             '!=' => 'ne',
             '>' => 'gt',
